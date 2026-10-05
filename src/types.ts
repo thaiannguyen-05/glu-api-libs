@@ -208,3 +208,44 @@ export interface FilmDetails {
 export interface FilmDetailsParams {
   film_id: number;
 }
+
+export interface CinemaDetailsStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+/**
+ * Full details for one cinema (`GET /cinemaDetails/?cinema_id=`).
+ * `status` travels inline. `ticketing` is a 0/1 flag (observed `0`).
+ */
+export interface CinemaDetails {
+  cinema_id: number;
+  cinema_name: string;
+  address: string;
+  address2: string;
+  city: string;
+  state: string;
+  county: string;
+  country: string;
+  postcode: string;
+  phone: string;
+  lat: number;
+  lng: number;
+  distance: number;
+  ticketing: number;
+  directions: string;
+  logo_url: string;
+  show_dates: FilmShowDate[];
+  status: CinemaDetailsStatus;
+}
+
+export interface CinemaDetailsParams {
+  cinema_id: number;
+}

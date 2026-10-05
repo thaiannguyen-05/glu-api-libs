@@ -9,7 +9,11 @@ export {
   nowDeviceDateTime,
 } from "./device-datetime.js";
 export { FilmsResource } from "./resources/films.js";
+export { CinemasResource } from "./resources/cinemas.js";
 export type {
+  CinemaDetails,
+  CinemaDetailsParams,
+  CinemaDetailsStatus,
   FilmAgeRating,
   FilmAlternateVersion,
   FilmCastMember,
