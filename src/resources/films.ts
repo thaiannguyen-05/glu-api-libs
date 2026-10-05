@@ -4,6 +4,8 @@ import type {
   FilmComingSoon,
   FilmDetails,
   FilmDetailsParams,
+  FilmImagesParams,
+  FilmImagesResponse,
   FilmNowShowing,
   FilmShowTimesParams,
   FilmShowTimesResponse,
@@ -61,6 +63,14 @@ export class FilmsResource {
     const films = (res?.films ?? []).map(normalizeFilm);
     if (params?.includeStatus) return { films, status: res?.status };
     return films;
+  }
+
+  /** All posters and stills for one film. Response is the image maps plus inline status. */
+  async images(params: FilmImagesParams): Promise<FilmImagesResponse> {
+    if (!params || !Number.isInteger(params.film_id)) {
+      throw new Error("films.images requires film_id as an integer");
+    }
+    return this.http.request<FilmImagesResponse>("/images/?film_id=" + params.film_id);
   }
 
   /** Full details for one film. `status` travels inline in the response. */

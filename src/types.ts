@@ -422,3 +422,23 @@ export interface FilmShowTimesParams {
   date: string;
   n?: number;
 }
+
+export interface FilmImagesStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+export interface FilmImagesResponse extends FilmImages {
+  status: FilmImagesStatus;
+}
+
+export interface FilmImagesParams {
+  film_id: number;
+}

@@ -18,6 +18,9 @@ Films scheduled for future release, from the `filmsComingSoon` endpoint. Item sh
 **FilmDetails**:
 Full record for one film, from the `filmDetails` endpoint (`?film_id=`). Base fields match the list items (but `film_trailer` is replaced by `trailers`), plus credits, genres, show dates and alternate versions. `status` travels inline.
 
+**Images**:
+Full poster and still set for one film, from the `images` endpoint (`?film_id=`). Same map shape as embedded list images. `status.count` is posters + stills. `status` travels inline.
+
 **Cinema**:
 A venue showing films, identified by `cinema_id`, from the `cinemaDetails` endpoint (`?cinema_id=`). `status` travels inline.
 _Avoid_: Theater (API vocabulary is cinema)
