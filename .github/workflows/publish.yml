@@ -22,8 +22,9 @@ concurrency:
 
 jobs:
   publish:
-    # Put [skip publish] in the merge commit message to skip.
-    if: "!contains(github.event.head_commit.message, '[skip publish]')"
+    # Put [skip publish] in the merge commit message to skip (push only;
+    # head_commit does not exist on manual dispatch).
+    if: "github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip publish]')"
     runs-on: ubuntu-latest
     environment: npm
     steps:
