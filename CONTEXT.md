@@ -22,6 +22,9 @@ Full record for one film, from the `filmDetails` endpoint (`?film_id=`). Base fi
 A venue showing films, identified by `cinema_id`, from the `cinemaDetails` endpoint (`?cinema_id=`). `status` travels inline.
 _Avoid_: Theater (API vocabulary is cinema)
 
+**CinemasNearby**:
+Cinemas near the request geolocation ordered by distance, from the `cinemasNearby` endpoint. Items are a trimmed subset of `CinemaDetails` (no country, phone, ticketing, directions or show dates).
+
 **Territory**:
 The country market the request is licensed for, sent as the `territory` header.
 

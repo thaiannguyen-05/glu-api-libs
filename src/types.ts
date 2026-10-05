@@ -249,3 +249,45 @@ export interface CinemaDetails {
 export interface CinemaDetailsParams {
   cinema_id: number;
 }
+
+export interface CinemaNearby {
+  cinema_id: number;
+  cinema_name: string;
+  address: string;
+  address2: string;
+  city: string;
+  state: string;
+  county: string;
+  postcode: string;
+  lat: number;
+  lng: number;
+  distance: number;
+  logo_url: string;
+}
+
+export interface CinemasNearbyStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+export interface CinemasNearbyResponse {
+  cinemas: CinemaNearby[];
+  status: CinemasNearbyStatus;
+}
+
+export interface CinemasNearbyParams {
+  // Max cinemas to return (query n).
+  n?: number;
+}
+
+export interface CinemasNearbyResult {
+  cinemas: CinemaNearby[];
+  status: CinemasNearbyStatus | undefined;
+}
