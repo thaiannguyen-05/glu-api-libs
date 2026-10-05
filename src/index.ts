@@ -8,4 +8,18 @@ export {
   isDeviceDateTime,
   nowDeviceDateTime,
 } from "./device-datetime.js";
-export type { GluClientHeaders, GluClientOptions, Movie, ListParams } from "./types.js";
+export { FilmsResource } from "./resources/films.js";
+export type {
+  FilmAgeRating,
+  FilmImageEntry,
+  FilmImageMedium,
+  FilmImages,
+  FilmNowShowing,
+  FilmReleaseDate,
+  FilmsNowShowingParams,
+  FilmsNowShowingResponse,
+  FilmsNowShowingResult,
+  FilmsNowShowingStatus,
+  GluClientHeaders,
+  GluClientOptions,
+} from "./types.js";

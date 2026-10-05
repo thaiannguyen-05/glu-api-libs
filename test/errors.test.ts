@@ -17,10 +17,10 @@ function clientWithFetch(fetchMock: typeof fetch) {
 }
 
 describe("API error handling", () => {
-  it("204 returns undefined (no content)", async () => {
+  it("204 maps to empty list (no content)", async () => {
     const fetchMock = vi.fn(async () => new Response(null, { status: 204 }));
     const client = clientWithFetch(fetchMock as unknown as typeof fetch);
-    await expect(client.movies.list()).resolves.toBeUndefined();
+    await expect(client.films.nowShowing()).resolves.toEqual([]);
   });
 
   it("400 maps to bad_request with MG-message", async () => {
@@ -32,7 +32,7 @@ describe("API error handling", () => {
         }),
     );
     const client = clientWithFetch(fetchMock as unknown as typeof fetch);
-    const err = await client.movies.list().catch((e) => e);
+    const err = await client.films.nowShowing().catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err.status).toBe(400);
     expect(err.code).toBe("bad_request");
@@ -43,7 +43,7 @@ describe("API error handling", () => {
   it("401 maps to unauthorized", async () => {
     const fetchMock = vi.fn(async () => new Response("unauthorized", { status: 401 }));
     const client = clientWithFetch(fetchMock as unknown as typeof fetch);
-    const err = await client.movies.list().catch((e) => e);
+    const err = await client.films.nowShowing().catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err.status).toBe(401);
     expect(err.code).toBe("unauthorized");
@@ -52,7 +52,7 @@ describe("API error handling", () => {
   it("403 maps to forbidden", async () => {
     const fetchMock = vi.fn(async () => new Response("forbidden", { status: 403 }));
     const client = clientWithFetch(fetchMock as unknown as typeof fetch);
-    const err = await client.movies.list().catch((e) => e);
+    const err = await client.films.nowShowing().catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err.status).toBe(403);
     expect(err.code).toBe("forbidden");
@@ -62,7 +62,7 @@ describe("API error handling", () => {
   it("429 maps to rate_limited", async () => {
     const fetchMock = vi.fn(async () => new Response("slow down", { status: 429 }));
     const client = clientWithFetch(fetchMock as unknown as typeof fetch);
-    const err = await client.movies.list().catch((e) => e);
+    const err = await client.films.nowShowing().catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err.status).toBe(429);
     expect(err.code).toBe("rate_limited");
@@ -71,7 +71,7 @@ describe("API error handling", () => {
   it("504 maps to gateway_timeout", async () => {
     const fetchMock = vi.fn(async () => new Response(null, { status: 504 }));
     const client = clientWithFetch(fetchMock as unknown as typeof fetch);
-    const err = await client.movies.list().catch((e) => e);
+    const err = await client.films.nowShowing().catch((e) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect(err.status).toBe(504);
     expect(err.code).toBe("gateway_timeout");
@@ -86,7 +86,7 @@ describe("API error handling", () => {
         }),
     );
     const client = clientWithFetch(fetchMock as unknown as typeof fetch);
-    const err = await client.movies.list().catch((e) => e);
+    const err = await client.films.nowShowing().catch((e) => e);
     expect(err.message).toBe("Custom body error");
     expect(err.code).toBe("custom");
     expect(err.mgMessage).toBe("Header error");

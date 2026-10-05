@@ -1,6 +1,6 @@
 # @glu/movie-sdk
 
-TypeScript SDK for `glu-movie-api`. Works in Node 20+, browsers, and edge runtimes (uses native `fetch`, zero runtime deps).
+TypeScript SDK for `glu-movie-api` (MovieGlu). Works in Node 20+, browsers, and edge runtimes (uses native `fetch`, zero runtime deps).
 
 ## Install
 
@@ -12,15 +12,23 @@ pnpm add @glu/movie-sdk
 ## Use
 
 ```ts
-import { GluClient } from "@glu/movie-sdk";
+import { GluClient, nowDeviceDateTime } from "@glu/movie-sdk";
 
 const client = new GluClient({
-  baseUrl: "https://api.example.com",
-  apiKey: process.env.GLU_API_KEY, // optional, sent as Bearer
+  baseUrl: "https://api-gate2.movieglu.com",
+  headers: {
+    client: "glu-app",
+    "x-api-key": process.env.GLU_API_KEY!,
+    authorization: "...",
+    territory: "UK",
+    "api-version": "v201",
+    geolocation: "51.5,-0.12",
+    "device-datetime": nowDeviceDateTime(),
+  },
 });
 
-const movies = await client.movies.list({ query: "dune", limit: 10 });
-const one = await client.movies.get(movies[0].id);
+const films = await client.films.nowShowing({ n: 10 });
+const withStatus = await client.films.nowShowing({ n: 10, includeStatus: true });
 ```
 
 ## Scripts
@@ -36,11 +44,12 @@ const one = await client.movies.get(movies[0].id);
 src/
   index.ts        # public exports
   client.ts       # GluClient entry
-  types.ts        # GluClientOptions, Movie
-  errors.ts       # ApiError
-  http.ts         # fetch wrapper (timeout, auth, JSON)
+  types.ts        # GluClientOptions, FilmNowShowing
+  errors.ts       # ApiError (+ MG-message mapping)
+  http.ts         # fetch wrapper (timeout, headers, JSON)
+  device-datetime.ts # device-datetime helper
   resources/
-    movies.ts     # movies.list / movies.get
+    films.ts      # films.nowShowing()
 test/
 examples/
 ```

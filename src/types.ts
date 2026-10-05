@@ -26,14 +26,71 @@ export interface GluClientOptions {
   fetch?: typeof fetch;
 }
 
-export interface Movie {
-  id: string;
-  title: string;
-  year?: number;
+export interface FilmReleaseDate {
+  release_date: string;
+  notes: string | null;
 }
 
-export interface ListParams {
-  query?: string;
-  page?: number;
-  limit?: number;
+export interface FilmAgeRating {
+  rating: string;
+  age_rating_image: string;
+  age_advisory: string;
+}
+
+export interface FilmImageMedium {
+  film_image: string;
+  width: number;
+  height: number;
+}
+
+export interface FilmImageEntry {
+  image_orientation: string;
+  region?: string;
+  medium: FilmImageMedium;
+}
+
+export interface FilmImages {
+  poster: Record<string, FilmImageEntry>;
+  still: Record<string, FilmImageEntry>;
+}
+
+export interface FilmNowShowing {
+  film_id: number;
+  imdb_id: number;
+  imdb_title_id: string;
+  film_name: string;
+  other_titles: Record<string, string> | null;
+  release_dates: FilmReleaseDate[];
+  age_rating: FilmAgeRating[];
+  film_trailer: string | null;
+  synopsis_long: string;
+  images: FilmImages;
+}
+
+export interface FilmsNowShowingStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+export interface FilmsNowShowingResponse {
+  films: FilmNowShowing[];
+  status: FilmsNowShowingStatus;
+}
+
+export interface FilmsNowShowingParams {
+  /** Max films to return (`?n=`). */
+  n?: number;
+}
+
+export interface FilmsNowShowingResult {
+  films: FilmNowShowing[];
+  /** Undefined only on 204 No Content (geolocation outside territory or stale device-datetime). */
+  status: FilmsNowShowingStatus | undefined;
 }
