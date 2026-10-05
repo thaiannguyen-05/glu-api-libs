@@ -5,6 +5,8 @@ import type {
   FilmDetails,
   FilmDetailsParams,
   FilmNowShowing,
+  FilmShowTimesParams,
+  FilmShowTimesResponse,
   FilmsComingSoonParams,
   FilmsComingSoonResponse,
   FilmsComingSoonResult,
@@ -12,6 +14,8 @@ import type {
   FilmsNowShowingResponse,
   FilmsNowShowingResult,
 } from "../types.js";
+
+const DATE_RE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 
 function normalizeFilm<T extends { age_rating: FilmAgeRating[] }>(film: T): T {
   return {
@@ -66,5 +70,27 @@ export class FilmsResource {
     }
     const res = await this.http.request<FilmDetails>(`/filmDetails/?film_id=${params.film_id}`);
     return normalizeFilm(res);
+  }
+
+  /**
+   * Showtimes joining one film with its cinemas.
+   * Mirror of `cinemas.showTimes`: times here carry `end_time`
+   * (not `display_start_time`), and version keys beyond Standard
+   * (IMAX, 3D) reference the alternate `film_id`s.
+   */
+  async showTimes(params: FilmShowTimesParams): Promise<FilmShowTimesResponse> {
+    if (!params || !Number.isInteger(params.film_id)) {
+      throw new Error("films.showTimes requires film_id as an integer");
+    }
+    if (typeof params.date !== "string" || !DATE_RE.test(params.date)) {
+      throw new Error("films.showTimes requires date as YYYY-MM-DD");
+    }
+    const qs = new URLSearchParams({
+      film_id: String(params.film_id),
+      date: params.date,
+    });
+    if (params.n !== undefined) qs.set("n", String(params.n));
+    const res = await this.http.request<FilmShowTimesResponse>(`/filmShowTimes/?${qs.toString()}`);
+    return { ...res, film: normalizeFilm(res.film) };
   }
 }

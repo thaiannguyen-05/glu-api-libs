@@ -361,3 +361,64 @@ export interface CinemaShowTimesParams {
   date: string;
   sort?: string;
 }
+
+export interface FilmShowtimeFilm {
+  film_id: number;
+  imdb_id: number;
+  imdb_title_id: string;
+  film_name: string;
+  other_titles: Record<string, string> | null;
+  version_type: string;
+  age_rating: FilmAgeRating[];
+  images: FilmImages;
+}
+
+export interface FilmShowtimeTime {
+  start_time: string;
+  end_time: string;
+}
+
+export interface FilmShowtimeShowing {
+  film_id: number;
+  film_name: string;
+  times: FilmShowtimeTime[];
+}
+
+export interface FilmShowtimeCinema {
+  cinema_id: number;
+  cinema_name: string;
+  address: string;
+  city: string;
+  county: string;
+  state: string;
+  zip: string;
+  lat: number;
+  lng: number;
+  distance: number;
+  logo_url: string;
+  showings: Record<string, FilmShowtimeShowing>;
+}
+
+export interface FilmShowTimesStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+export interface FilmShowTimesResponse {
+  film: FilmShowtimeFilm;
+  cinemas: FilmShowtimeCinema[];
+  status: FilmShowTimesStatus;
+}
+
+export interface FilmShowTimesParams {
+  film_id: number;
+  date: string;
+  n?: number;
+}

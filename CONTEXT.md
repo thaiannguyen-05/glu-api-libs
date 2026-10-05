@@ -28,6 +28,9 @@ Cinemas near the request geolocation ordered by distance, from the `cinemasNearb
 **Showtimes**:
 Screening times joining one cinema with its films, from the `cinemaShowTimes` endpoint (`?film_id=&cinema_id=&date=`). `film_id` scopes but may return several films. `status` travels inline.
 
+**FilmShowtimes**:
+Screening times joining one film with its cinemas, from the `filmShowTimes` endpoint (`?film_id=&date=`). Mirror of Showtimes: times carry `end_time` and version keys reference alternate `film_id`s. `status` travels inline.
+
 **Territory**:
 The country market the request is licensed for, sent as the `territory` header.
 
