@@ -27,7 +27,8 @@ const client = new GluClient({
   },
 });
 
-const films = await client.films.nowShowing({ n: 10 });
+const nowShowing = await client.films.nowShowing({ n: 10 });
+const comingSoon = await client.films.comingSoon({ n: 10 });
 const withStatus = await client.films.nowShowing({ n: 10, includeStatus: true });
 ```
 
@@ -49,7 +50,7 @@ src/
   http.ts         # fetch wrapper (timeout, headers, JSON)
   device-datetime.ts # device-datetime helper
   resources/
-    films.ts      # films.nowShowing()
+    films.ts      # films.nowShowing() / films.comingSoon()
 test/
 examples/
 ```

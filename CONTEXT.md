@@ -12,6 +12,9 @@ _Avoid_: Movie
 Films currently showing, from the `filmsNowShowing` endpoint.
 _Avoid_: Now-showing list, movies list
 
+**ComingSoon**:
+Films scheduled for future release, from the `filmsComingSoon` endpoint. Item shape is identical to a NowShowing film.
+
 **Territory**:
 The country market the request is licensed for, sent as the `territory` header.
 

@@ -14,8 +14,11 @@ async function main() {
     },
   });
 
-  const films = await client.films.nowShowing({ n: 10 });
-  console.log(films.map((f) => `${f.film_id} ${f.film_name}`));
+  const nowShowing = await client.films.nowShowing({ n: 10 });
+  console.log(nowShowing.map((f) => `${f.film_id} ${f.film_name}`));
+
+  const comingSoon = await client.films.comingSoon({ n: 10 });
+  console.log(comingSoon.map((f) => `${f.film_id} ${f.film_name}`));
 
   const withStatus = await client.films.nowShowing({ n: 10, includeStatus: true });
   console.log(withStatus.status);

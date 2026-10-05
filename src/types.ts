@@ -94,3 +94,34 @@ export interface FilmsNowShowingResult {
   /** Undefined only on 204 No Content (geolocation outside territory or stale device-datetime). */
   status: FilmsNowShowingStatus | undefined;
 }
+
+/** A coming-soon film. Item shape is identical to `FilmNowShowing`. */
+export type FilmComingSoon = FilmNowShowing;
+
+export interface FilmsComingSoonStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+export interface FilmsComingSoonResponse {
+  films: FilmComingSoon[];
+  status: FilmsComingSoonStatus;
+}
+
+export interface FilmsComingSoonParams {
+  /** Max films to return (`?n=`). */
+  n?: number;
+}
+
+export interface FilmsComingSoonResult {
+  films: FilmComingSoon[];
+  /** Undefined only on 204 No Content (geolocation outside territory or stale device-datetime). */
+  status: FilmsComingSoonStatus | undefined;
+}

@@ -11,11 +11,16 @@ export {
 export { FilmsResource } from "./resources/films.js";
 export type {
   FilmAgeRating,
+  FilmComingSoon,
   FilmImageEntry,
   FilmImageMedium,
   FilmImages,
   FilmNowShowing,
   FilmReleaseDate,
+  FilmsComingSoonParams,
+  FilmsComingSoonResponse,
+  FilmsComingSoonResult,
+  FilmsComingSoonStatus,
   FilmsNowShowingParams,
   FilmsNowShowingResponse,
   FilmsNowShowingResult,
