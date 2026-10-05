@@ -1,18 +1,18 @@
-# @glu/movie-sdk
+# @ticket-order-system/movie-sdk
 
 TypeScript SDK for `glu-movie-api` (MovieGlu). Works in Node 20+, browsers, and edge runtimes (uses native `fetch`, zero runtime deps).
 
 ## Install
 
 ```sh
-pnpm add @glu/movie-sdk
-# npm i @glu/movie-sdk
+pnpm add @ticket-order-system/movie-sdk
+# npm i @ticket-order-system/movie-sdk
 ```
 
 ## Use
 
 ```ts
-import { GluClient, nowDeviceDateTime } from "@glu/movie-sdk";
+import { GluClient, nowDeviceDateTime } from "@ticket-order-system/movie-sdk";
 
 const client = new GluClient({
   baseUrl: "https://api-gate2.movieglu.com",

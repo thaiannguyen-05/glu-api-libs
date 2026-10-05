@@ -1,5 +1,5 @@
 {
-  "name": "@glu/movie-sdk",
+  "name": "@ticket-order-system/movie-sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for glu-movie-api",
   "license": "MIT",
