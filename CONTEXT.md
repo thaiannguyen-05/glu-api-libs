@@ -25,6 +25,9 @@ _Avoid_: Theater (API vocabulary is cinema)
 **CinemasNearby**:
 Cinemas near the request geolocation ordered by distance, from the `cinemasNearby` endpoint. Items are a trimmed subset of `CinemaDetails` (no country, phone, ticketing, directions or show dates).
 
+**Showtimes**:
+Screening times joining one cinema with its films, from the `cinemaShowTimes` endpoint (`?film_id=&cinema_id=&date=`). `film_id` scopes but may return several films. `status` travels inline.
+
 **Territory**:
 The country market the request is licensed for, sent as the `territory` header.
 

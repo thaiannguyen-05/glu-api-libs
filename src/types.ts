@@ -291,3 +291,73 @@ export interface CinemasNearbyResult {
   cinemas: CinemaNearby[];
   status: CinemasNearbyStatus | undefined;
 }
+
+export interface ShowtimeShowDate {
+  date: string;
+  display_date: string;
+}
+
+export interface ShowtimeCinema {
+  cinema_id: number;
+  cinema_name: string;
+  address: string;
+  address2: string;
+  city: string;
+  country: string;
+  state: string;
+  postcode: string;
+  returned_date: string;
+  show_dates: ShowtimeShowDate[];
+}
+
+export interface ShowtimeTime {
+  start_time: string;
+  display_start_time: string;
+}
+
+export interface ShowtimeShowing {
+  film_id: number;
+  film_name: string;
+  times: ShowtimeTime[];
+}
+
+export interface ShowtimeFilm {
+  film_id: number;
+  imdb_id: number;
+  imdb_title_id: string;
+  film_name: string;
+  other_titles: Record<string, string> | null;
+  version_type: string;
+  synopsis_long: string;
+  duration_mins: number;
+  duration_hrs_mins: string;
+  genres: FilmGenre[];
+  age_rating: FilmAgeRating[];
+  images: FilmImages;
+  showings: Record<string, ShowtimeShowing>;
+}
+
+export interface CinemaShowTimesStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+export interface CinemaShowTimesResponse {
+  cinema: ShowtimeCinema;
+  films: ShowtimeFilm[];
+  status: CinemaShowTimesStatus;
+}
+
+export interface CinemaShowTimesParams {
+  film_id: number;
+  cinema_id: number;
+  date: string;
+  sort?: string;
+}

@@ -3,10 +3,14 @@ import type {
   CinemaDetails,
   CinemaDetailsParams,
   CinemaNearby,
+  CinemaShowTimesParams,
+  CinemaShowTimesResponse,
   CinemasNearbyParams,
   CinemasNearbyResponse,
   CinemasNearbyResult,
 } from "../types.js";
+
+const DATE_RE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
 
 export class CinemasResource {
   constructor(private http: HttpClient) {}
@@ -33,5 +37,37 @@ export class CinemasResource {
     const cinemas = res?.cinemas ?? [];
     if (params?.includeStatus) return { cinemas, status: res?.status };
     return cinemas;
+  }
+
+  /**
+   * Showtimes joining one cinema with its films.
+   * Note: `film_id` scopes but does not guarantee a single film back.
+   */
+  async showTimes(params: CinemaShowTimesParams): Promise<CinemaShowTimesResponse> {
+    if (!params || !Number.isInteger(params.film_id)) {
+      throw new Error("cinemas.showTimes requires film_id as an integer");
+    }
+    if (!Number.isInteger(params.cinema_id)) {
+      throw new Error("cinemas.showTimes requires cinema_id as an integer");
+    }
+    if (typeof params.date !== "string" || !DATE_RE.test(params.date)) {
+      throw new Error("cinemas.showTimes requires date as YYYY-MM-DD");
+    }
+    const qs = new URLSearchParams({
+      film_id: String(params.film_id),
+      cinema_id: String(params.cinema_id),
+      date: params.date,
+    });
+    if (params.sort) qs.set("sort", params.sort);
+    const res = await this.http.request<CinemaShowTimesResponse>(
+      `/cinemaShowTimes/?${qs.toString()}`,
+    );
+    return {
+      ...res,
+      films: res.films.map((f) => ({
+        ...f,
+        age_rating: f.age_rating.map((r) => ({ ...r, rating: r.rating.trim() })),
+      })),
+    };
   }
 }
