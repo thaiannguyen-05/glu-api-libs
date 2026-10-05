@@ -1,8 +1,8 @@
 name: Publish to npm
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       bump:
@@ -15,12 +15,15 @@ permissions:
   contents: read
   id-token: write
 
-# No concurrency group on purpose: publishes run async/independent,
-# never queue sync behind each other. No `needs:` on CI either —
-# this workflow does its own quick verify then publishes.
+# Serializes publishes: each merge to main gets its own patch version.
+concurrency:
+  group: publish-main
+  cancel-in-progress: false
 
 jobs:
   publish:
+    # Put [skip publish] in the merge commit message to skip.
+    if: "!contains(github.event.head_commit.message, '[skip publish]')"
     runs-on: ubuntu-latest
     environment: npm
     steps:
@@ -36,17 +39,30 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org/
 
-      # Release trigger: version = git tag (v1.2.3 -> 1.2.3).
-      # Tag is the source of truth; package.json is synced to it.
-      - name: Set version from release tag
-        if: github.event_name == 'release'
+      # Merge to main: publish package.json version if fresh,
+      # otherwise bump patch over the latest on npm.
+      - name: Resolve version (merge to main)
+        if: github.event_name == 'push'
         run: |
-          TAG="${GITHUB_REF_NAME#v}"
-          if ! [[ "$TAG" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$ ]]; then
-            echo "Release tag '$GITHUB_REF_NAME' is not semver (expected vX.Y.Z)"; exit 1
-          fi
-          npm pkg set version="$TAG"
-          echo "Publishing version $TAG"
+          PKG=$(node -p "require('./package.json').name")
+          CUR=$(node -p "require('./package.json').version")
+          PUB=$(npm view "$PKG" version 2>/dev/null || echo "0.0.0")
+          node -e "
+            const fs = require('fs');
+            const p = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            const parse = (v) => v.match(/^(\d+)\.(\d+)\.(\d+)(.*)$/);
+            const mc = parse('$CUR'), mp = parse('$PUB');
+            if (!mc) { console.error('Bad version $CUR'); process.exit(1); }
+            const cmp = !mp ? 1 : (mc[1] - mp[1] || mc[2] - mp[2] || mc[3] - mp[3]);
+            if (cmp > 0 && '$PUB' !== '0.0.0' || '$PUB' === '0.0.0') {
+              console.log('Publishing version ' + p.version + ' (not on npm yet or ahead)');
+            } else {
+              const next = [Number(mp[1]), Number(mp[2]), Number(mp[3]) + 1].join('.') + mp[4];
+              p.version = next;
+              fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');
+              console.log('Version $CUR already published, bumped to ' + next);
+            }
+          "
 
       # Manual trigger: bump patch/minor/major from package.json.
       - name: Bump version (manual run)
