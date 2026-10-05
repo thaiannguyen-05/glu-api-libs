@@ -54,6 +54,9 @@ export function createHttpClient(options: GluClientOptions): HttpClient {
       });
 
       if (!res.ok) throw await ApiError.fromResponse(res);
+      // 204 = success with no content. Common causes: geolocation outside the
+      // licensed territory, or a stale device-datetime header. Detail (if any)
+      // is in the MG-message response header; there is no body to parse.
       if (res.status === 204) return undefined as T;
       return (await res.json()) as T;
     } catch (err) {
