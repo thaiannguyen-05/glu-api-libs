@@ -15,6 +15,9 @@ _Avoid_: Now-showing list, movies list
 **ComingSoon**:
 Films scheduled for future release, from the `filmsComingSoon` endpoint. Item shape is identical to a NowShowing film.
 
+**FilmDetails**:
+Full record for one film, from the `filmDetails` endpoint (`?film_id=`). Base fields match the list items (but `film_trailer` is replaced by `trailers`), plus credits, genres, show dates and alternate versions. `status` travels inline.
+
 **Territory**:
 The country market the request is licensed for, sent as the `territory` header.
 
