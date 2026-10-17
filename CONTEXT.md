@@ -31,6 +31,10 @@ Cinemas near the request geolocation ordered by distance, from the `cinemasNearb
 **Showtimes**:
 Screening times joining one cinema with its films, from the `cinemaShowTimes` endpoint (`?cinema_id=&date=`, plus optional `?film_id=` and `?sort=popularity|alphabetical`). With `film_id` returns that cinema/film/date combination; without `film_id` returns ALL films at that cinema on that date. `film_id` scopes but may return several films. `status` travels inline.
 
+**CinemaLiveSearch**:
+Cinemas matching a `query` string, from the `cinemaLiveSearch` endpoint (`?query=`, plus optional `?n=` max 25). Loose subset of `CinemaDetails`: only `cinema_id` and `cinema_name` are guaranteed, the rest (`address`, `city`, `postcode`, `lat`/`lng`, `distance`, `logo_url`) are optional. `distance` (miles) appears only when the global geolocation applies. Do not cache; debounce search-as-you-type.
+_Avoid_: using `nearby` for search results
+
 **FilmShowtimes**:
 Screening times joining one film with its cinemas, from the `filmShowTimes` endpoint (`?film_id=&date=`). Mirror of Showtimes: times carry `end_time` and version keys reference alternate `film_id`s. `status` travels inline.
 

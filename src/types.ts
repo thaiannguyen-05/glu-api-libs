@@ -292,6 +292,48 @@ export interface CinemasNearbyResult {
   status: CinemasNearbyStatus | undefined;
 }
 
+export interface CinemaLiveSearch {
+  cinema_id: number;
+  cinema_name: string;
+  address?: string;
+  address2?: string;
+  city?: string;
+  postcode?: string;
+  lat?: number;
+  lng?: number;
+  distance?: number;
+  logo_url?: string;
+}
+
+export interface CinemaLiveSearchStatus {
+  count: number;
+  state: string;
+  method: string;
+  message: string | null;
+  request_method: string;
+  version: string;
+  territory: string;
+  device_datetime_sent: string;
+  device_datetime_used: string;
+}
+
+export interface CinemaLiveSearchResponse {
+  cinemas: CinemaLiveSearch[];
+  status: CinemaLiveSearchStatus;
+}
+
+export interface CinemaLiveSearchParams {
+  /** Search string (min 3 chars after trim). Sent URL-encoded as `?query=`. */
+  query: string;
+  /** Max results (`?n=`). Server default 5, max 25. */
+  n?: number;
+}
+
+export interface CinemaLiveSearchResult {
+  cinemas: CinemaLiveSearch[];
+  status: CinemaLiveSearchStatus | undefined;
+}
+
 export interface ShowtimeShowDate {
   date: string;
   display_date: string;

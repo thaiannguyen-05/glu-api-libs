@@ -2,6 +2,10 @@ import type { HttpClient } from "../http.js";
 import type {
   CinemaDetails,
   CinemaDetailsParams,
+  CinemaLiveSearch,
+  CinemaLiveSearchParams,
+  CinemaLiveSearchResponse,
+  CinemaLiveSearchResult,
   CinemaNearby,
   CinemaShowTimesParams,
   CinemaShowTimesResponse,
@@ -49,6 +53,38 @@ export class CinemasResource {
    * the requested date. Past times are filtered server-side via `device-datetime`.
    * Response is safe to cache by `cinema_id` + `date` (+ `film_id`, `sort`).
    */
+  async liveSearch(params: CinemaLiveSearchParams): Promise<CinemaLiveSearch[]>;
+  async liveSearch(
+    params: CinemaLiveSearchParams & { includeStatus: true },
+  ): Promise<CinemaLiveSearchResult>;
+  /**
+   * Cinema names / towns matching a search string (`GET /cinemaLiveSearch/`).
+   * Best with the global `geolocation` header (results within ~75 miles carry `distance`).
+   * Do NOT cache results; callers should debounce search-as-you-type
+   * (e.g. delay until pause, or submit every 3-4 chars) to save quota.
+   */
+  async liveSearch(
+    params: CinemaLiveSearchParams & { includeStatus?: boolean },
+  ): Promise<CinemaLiveSearch[] | CinemaLiveSearchResult> {
+    if (typeof params?.query !== "string" || params.query.trim().length < 3) {
+      throw new Error("cinemas.liveSearch requires query as a string with at least 3 characters");
+    }
+    if (
+      params.n !== undefined &&
+      (!Number.isInteger(params.n) || params.n < 1 || params.n > 25)
+    ) {
+      throw new Error("cinemas.liveSearch requires n as an integer between 1 and 25 when provided");
+    }
+    const qs = new URLSearchParams({ query: params.query.trim() });
+    if (params.n !== undefined) qs.set("n", String(params.n));
+    const res = await this.http.request<CinemaLiveSearchResponse | undefined>(
+      `/cinemaLiveSearch/?${qs.toString()}`,
+    );
+    const cinemas = res?.cinemas ?? [];
+    if (params.includeStatus) return { cinemas, status: res?.status };
+    return cinemas;
+  }
+
   async showTimes(params: CinemaShowTimesParams): Promise<CinemaShowTimesResponse> {
     if (!params || !Number.isInteger(params.cinema_id)) {
       throw new Error("cinemas.showTimes requires cinema_id as an integer");
