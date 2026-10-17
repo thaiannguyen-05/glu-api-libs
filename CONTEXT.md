@@ -29,7 +29,7 @@ _Avoid_: Theater (API vocabulary is cinema)
 Cinemas near the request geolocation ordered by distance, from the `cinemasNearby` endpoint. Items are a trimmed subset of `CinemaDetails` (no country, phone, ticketing, directions or show dates).
 
 **Showtimes**:
-Screening times joining one cinema with its films, from the `cinemaShowTimes` endpoint (`?film_id=&cinema_id=&date=`). `film_id` scopes but may return several films. `status` travels inline.
+Screening times joining one cinema with its films, from the `cinemaShowTimes` endpoint (`?cinema_id=&date=`, plus optional `?film_id=` and `?sort=popularity|alphabetical`). With `film_id` returns that cinema/film/date combination; without `film_id` returns ALL films at that cinema on that date. `film_id` scopes but may return several films. `status` travels inline.
 
 **FilmShowtimes**:
 Screening times joining one film with its cinemas, from the `filmShowTimes` endpoint (`?film_id=&date=`). Mirror of Showtimes: times carry `end_time` and version keys reference alternate `film_id`s. `status` travels inline.

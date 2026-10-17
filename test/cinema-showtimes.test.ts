@@ -193,6 +193,23 @@ describe("cinemas.showTimes", () => {
     expect(res.status.method).toBe("cinemaShowTimes");
   });
 
+  it("supports Scenario 2 (cinema_id + date only, no film_id)", async () => {
+    const fetchMock = vi.fn(
+      async () => new Response(JSON.stringify(showTimesFixture), { status: 200 }),
+    );
+    const client = new GluClient({
+      baseUrl: "https://api.example.com",
+      headers,
+      fetch: fetchMock,
+    });
+    const res = await client.cinemas.showTimes({ cinema_id: 8845, date: "2026-10-12" });
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.example.com/cinemaShowTimes/?cinema_id=8845&date=2026-10-12",
+      expect.anything(),
+    );
+    expect(res.films).toHaveLength(2);
+  });
+
   it("rejects bad params without calling fetch", async () => {
     const fetchMock = vi.fn(async () => new Response("{}", { status: 200 }));
     const client = new GluClient({
@@ -201,13 +218,32 @@ describe("cinemas.showTimes", () => {
       fetch: fetchMock,
     });
     // @ts-expect-error - testing runtime guard
-    await expect(client.cinemas.showTimes({})).rejects.toThrow(/film_id/);
+    await expect(client.cinemas.showTimes({})).rejects.toThrow(/cinema_id/);
     await expect(
       client.cinemas.showTimes({ film_id: 2756, cinema_id: 8845, date: "12-10-2026" }),
     ).rejects.toThrow(/date/);
     await expect(
       client.cinemas.showTimes({ film_id: 2756, cinema_id: 88.5, date: "2026-10-12" }),
     ).rejects.toThrow(/cinema_id/);
+    await expect(
+      // @ts-expect-error - testing runtime guard
+      client.cinemas.showTimes({ cinema_id: 8845, date: "2026-10-12", film_id: "x" }),
+    ).rejects.toThrow(/film_id/);
+    await expect(
+      // @ts-expect-error - testing runtime guard
+      client.cinemas.showTimes({ cinema_id: 8845, date: "2026-10-12", sort: "nope" }),
+    ).rejects.toThrow(/sort/);
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("returns empty films on 204 No Content", async () => {
+    const fetchMock = vi.fn(async () => new Response(null, { status: 204 }));
+    const client = new GluClient({
+      baseUrl: "https://api.example.com",
+      headers,
+      fetch: fetchMock,
+    });
+    const res = await client.cinemas.showTimes({ cinema_id: 8845, date: "2026-10-12" });
+    expect(res.films).toEqual([]);
   });
 });

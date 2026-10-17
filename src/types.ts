@@ -356,10 +356,10 @@ export interface CinemaShowTimesResponse {
 }
 
 export interface CinemaShowTimesParams {
-  film_id: number;
   cinema_id: number;
   date: string;
-  sort?: string;
+  film_id?: number;
+  sort?: "popularity" | "alphabetical";
 }
 
 export interface FilmShowtimeFilm {

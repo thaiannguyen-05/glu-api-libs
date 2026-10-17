@@ -40,28 +40,41 @@ export class CinemasResource {
   }
 
   /**
-   * Showtimes joining one cinema with its films.
+   * Showtimes joining one cinema with its films (`GET /cinemaShowTimes/`).
+   * - Scenario 1: `cinema_id` + `date` + `film_id` returns showtimes for that combination.
+   * - Scenario 2: `cinema_id` + `date` only returns showtimes for ALL films at that cinema.
    * Note: `film_id` scopes but does not guarantee a single film back.
+   * `date` is YYYY-MM-DD in the cinema's published schedule. In line with industry
+   * practice the 24h period is 03:00-02:59, so post-midnight times still belong to
+   * the requested date. Past times are filtered server-side via `device-datetime`.
+   * Response is safe to cache by `cinema_id` + `date` (+ `film_id`, `sort`).
    */
   async showTimes(params: CinemaShowTimesParams): Promise<CinemaShowTimesResponse> {
-    if (!params || !Number.isInteger(params.film_id)) {
-      throw new Error("cinemas.showTimes requires film_id as an integer");
-    }
-    if (!Number.isInteger(params.cinema_id)) {
+    if (!params || !Number.isInteger(params.cinema_id)) {
       throw new Error("cinemas.showTimes requires cinema_id as an integer");
     }
     if (typeof params.date !== "string" || !DATE_RE.test(params.date)) {
       throw new Error("cinemas.showTimes requires date as YYYY-MM-DD");
     }
-    const qs = new URLSearchParams({
-      film_id: String(params.film_id),
-      cinema_id: String(params.cinema_id),
-      date: params.date,
-    });
+    if (params.film_id !== undefined && !Number.isInteger(params.film_id)) {
+      throw new Error("cinemas.showTimes requires film_id as an integer when provided");
+    }
+    if (
+      params.sort !== undefined &&
+      params.sort !== "popularity" &&
+      params.sort !== "alphabetical"
+    ) {
+      throw new Error('cinemas.showTimes sort must be "popularity" or "alphabetical"');
+    }
+    const qs = new URLSearchParams();
+    if (params.film_id !== undefined) qs.set("film_id", String(params.film_id));
+    qs.set("cinema_id", String(params.cinema_id));
+    qs.set("date", params.date);
     if (params.sort) qs.set("sort", params.sort);
-    const res = await this.http.request<CinemaShowTimesResponse>(
+    const res = await this.http.request<CinemaShowTimesResponse | undefined>(
       `/cinemaShowTimes/?${qs.toString()}`,
     );
+    if (!res) return { cinema: undefined, films: [], status: undefined } as unknown as CinemaShowTimesResponse;
     return {
       ...res,
       films: res.films.map((f) => ({
